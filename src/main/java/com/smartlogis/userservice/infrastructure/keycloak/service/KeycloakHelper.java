@@ -1,7 +1,5 @@
 package com.smartlogis.userservice.infrastructure.keycloak.service;
 
-import java.util.List;
-
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RoleScopeResource;
 import org.keycloak.admin.client.resource.UserResource;
@@ -72,25 +70,6 @@ public class KeycloakHelper {
 		} catch (Exception e) {
 			throw new KeycloakException(KeycloakMessageCode.INTERNAL_FAILED, e);
 		}
-	}
-
-	List<String> getRolesById(String id) {
-		List<RoleRepresentation> representations = getRoleScopeById(id).listAll();
-
-		if (representations == null || representations.isEmpty()) {
-			throw new KeycloakException(KeycloakMessageCode.ROLE_NOT_ASSIGNED);
-		}
-
-		List<String> roles = representations.stream()
-			.filter(r -> r.getName().startsWith("ROLE_"))
-			.map(r -> r.getName().replace("ROLE_", ""))
-			.toList();
-
-		if (roles.isEmpty()) {
-			throw new KeycloakException(KeycloakMessageCode.ROLE_NOT_ASSIGNED);
-		}
-
-		return roles;
 	}
 
 	String getResponseMessage(Response response) {
