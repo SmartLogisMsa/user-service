@@ -30,7 +30,7 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'com.github.smartlogismsa:common-module:0.0.5'
+    implementation 'com.github.smartlogismsa:common-module:0.0.6'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
