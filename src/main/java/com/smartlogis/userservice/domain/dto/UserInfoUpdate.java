@@ -4,7 +4,7 @@ import com.smartlogis.userservice.domain.UserPhone;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record UserUpdate (
+public record UserInfoUpdate(
 	@NotBlank String slackId,
 	@NotBlank String firstName,
 	@NotBlank String lastName,

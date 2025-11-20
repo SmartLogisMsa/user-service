@@ -10,7 +10,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum UserMessageCode implements MessageCode {
-    INVALID_ROLE("USER.INVALID_ROLE", HttpStatus.BAD_REQUEST)
+	USER_NOT_FOUND("USER.USER_NOT_FOUND", HttpStatus.NOT_FOUND),
+    INVALID_ROLE("USER.INVALID_ROLE", HttpStatus.BAD_REQUEST),
+	INVALID_STATUS_CHANGE("USER.INVALID_STATUS_CHANGE", HttpStatus.BAD_REQUEST),
+	USER_ALREADY_REGISTERED("USER.USER_ALREADY_REGISTERED", HttpStatus.CONFLICT),
+	USER_ALREADY_PENDING("USER.USER_ALREADY_PENDING", HttpStatus.CONFLICT),
 	;
 
     private final String code;

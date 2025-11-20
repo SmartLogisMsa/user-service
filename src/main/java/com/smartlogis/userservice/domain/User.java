@@ -3,7 +3,7 @@ package com.smartlogis.userservice.domain;
 import com.smartlogis.common.domain.AbstractEntity;
 import com.smartlogis.userservice.domain.dto.OrganizationInfo;
 import com.smartlogis.userservice.domain.dto.UserCreate;
-import com.smartlogis.userservice.domain.dto.UserUpdate;
+import com.smartlogis.userservice.domain.dto.UserInfoUpdate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -85,24 +85,21 @@ public class User extends AbstractEntity {
 		return user;
 	}
 
-	public void updateInfo(UserUpdate userUpdate) {
-		UserValidator.validateSlackId(userUpdate.slackId());
-		UserValidator.validateFirstName(userUpdate.firstName());
-		UserValidator.validateLastName(userUpdate.lastName());
-		UserValidator.validateEmail(userUpdate.email());
-		UserValidator.validatePhone(userUpdate.phone());
+	public void updateInfo(UserInfoUpdate userInfoUpdate) {
+		UserValidator.validateSlackId(userInfoUpdate.slackId());
+		UserValidator.validateFirstName(userInfoUpdate.firstName());
+		UserValidator.validateLastName(userInfoUpdate.lastName());
+		UserValidator.validateEmail(userInfoUpdate.email());
+		UserValidator.validatePhone(userInfoUpdate.phone());
 	}
 
-	public void updateOrganization(OrganizationInfo organization, UserRole role, String updatedBy) {
+	public void updateOrganization(OrganizationInfo organization, UserRole role) {
 		UserValidator.validateOrganization(organization);
 		UserValidator.validateRole(organization.type(), role);
-		UserValidator.validateUpdatedBy(updatedBy);
 
 		this.organizationType = organization.type();
 		this.organizationId = organization.id();
 		this.role = role;
-
-		this.updatedBy(updatedBy);
 	}
 
 	public void approve() {
