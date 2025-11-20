@@ -4,8 +4,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.smartlogis.userservice.domain.dto.OrganizationInfo;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -41,8 +39,8 @@ class UserValidator {
 		}
 	}
 
-	public static void validateOrganization(OrganizationInfo organization) {
-		if (organization == null || organization.type() == null || organization.id() == null || organization.id().getId() == null) {
+	public static void validateOrganization(Organization organization) {
+		if (organization == null || organization.getType() == null || organization.getId() == null || organization.getId().getId() == null) {
 			throw new IllegalArgumentException("소속 정보(organization)는 비어 있을 수 없습니다.");
 		}
 	}

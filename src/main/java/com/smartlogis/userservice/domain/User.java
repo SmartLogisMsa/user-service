@@ -1,9 +1,9 @@
 package com.smartlogis.userservice.domain;
 
 import com.smartlogis.common.domain.AbstractEntity;
-import com.smartlogis.userservice.domain.dto.OrganizationInfo;
 import com.smartlogis.userservice.domain.dto.UserCreate;
 import com.smartlogis.userservice.domain.dto.UserInfoUpdate;
+import com.smartlogis.userservice.domain.dto.UserRoleUpdate;
 import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
 
@@ -35,12 +35,8 @@ public class User extends AbstractEntity {
 	@Column(nullable = false)
 	private String slackId;
 
-	@Enumerated(EnumType.STRING)
-	@Column
-	private OrganizationType organizationType;
-
 	@Embedded
-	private OrganizationId organizationId;
+	Organization organization;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -62,24 +58,24 @@ public class User extends AbstractEntity {
 	@Column
 	private UserRole role;
 
-	public static User create(UserCreate userCreate) {
+	public static User create(UserCreate request) {
 		User user = new User();
 
-		UserValidator.validateId(userCreate.id());
-		UserValidator.validateUsername(userCreate.username());
-		UserValidator.validateSlackId(userCreate.slackId());
-		UserValidator.validateFirstName(userCreate.firstName());
-		UserValidator.validateLastName(userCreate.lastName());
-		UserValidator.validateEmail(userCreate.email());
-		UserValidator.validatePhone(userCreate.phone());
+		UserValidator.validateId(request.id());
+		UserValidator.validateUsername(request.username());
+		UserValidator.validateSlackId(request.slackId());
+		UserValidator.validateFirstName(request.firstName());
+		UserValidator.validateLastName(request.lastName());
+		UserValidator.validateEmail(request.email());
+		UserValidator.validatePhone(request.phone());
 
-		user.id = userCreate.id();
-		user.username = userCreate.username();
-		user.slackId = userCreate.slackId();
-		user.firstName = userCreate.firstName();
-		user.lastName = userCreate.lastName();
-		user.email = userCreate.email();
-		user.phone = userCreate.phone();
+		user.id = request.id();
+		user.username = request.username();
+		user.slackId = request.slackId();
+		user.firstName = request.firstName();
+		user.lastName = request.lastName();
+		user.email = request.email();
+		user.phone = request.phone();
 		user.status = UserStatus.PENDING;
 
 		user.createdBy(user.username);
@@ -87,21 +83,20 @@ public class User extends AbstractEntity {
 		return user;
 	}
 
-	public void updateInfo(UserInfoUpdate userInfoUpdate) {
-		UserValidator.validateSlackId(userInfoUpdate.slackId());
-		UserValidator.validateFirstName(userInfoUpdate.firstName());
-		UserValidator.validateLastName(userInfoUpdate.lastName());
-		UserValidator.validateEmail(userInfoUpdate.email());
-		UserValidator.validatePhone(userInfoUpdate.phone());
+	public void updateInfo(UserInfoUpdate request) {
+		UserValidator.validateSlackId(request.slackId());
+		UserValidator.validateFirstName(request.firstName());
+		UserValidator.validateLastName(request.lastName());
+		UserValidator.validateEmail(request.email());
+		UserValidator.validatePhone(request.phone());
 	}
 
-	public void updateOrganization(OrganizationInfo organization, UserRole role) {
-		UserValidator.validateOrganization(organization);
-		UserValidator.validateRole(organization.type(), role);
+	public void updateOrganization(UserRoleUpdate request) {
+		UserValidator.validateOrganization(request.organization());
+		UserValidator.validateRole(request.organization().getType(), request.role());
 
-		this.organizationType = organization.type();
-		this.organizationId = organization.id();
-		this.role = role;
+		this.organization = request.organization();
+		this.role = request.role();
 	}
 
 	public void approve() {

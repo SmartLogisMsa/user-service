@@ -5,12 +5,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import com.smartlogis.userservice.domain.User;
+import com.smartlogis.userservice.domain.dto.UserRoleUpdate;
 import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.UserId;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
 import com.smartlogis.userservice.domain.repository.UserRepository;
-import com.smartlogis.userservice.domain.UserRole;
-import com.smartlogis.userservice.domain.dto.OrganizationInfo;
 import com.smartlogis.userservice.domain.dto.UserCreate;
 import com.smartlogis.userservice.domain.dto.UserInfoUpdate;
 
@@ -45,11 +44,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User updateRole(UserId userId, OrganizationInfo organization, UserRole role) {
+	public User updateRole(UserId userId, @Valid UserRoleUpdate userRoleUpdate) {
 		User user = repository.findById(userId)
 			.orElseThrow(() -> new UserException(UserMessageCode.USER_NOT_FOUND));
 
-		user.updateOrganization(organization, role);
+		user.updateOrganization(userRoleUpdate);
 
 		return user;
 	}
