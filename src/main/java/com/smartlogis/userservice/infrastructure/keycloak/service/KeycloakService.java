@@ -7,7 +7,7 @@ import org.keycloak.admin.client.resource.RoleScopeResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.springframework.stereotype.Service;
 
-import com.smartlogis.userservice.application.AuthService;
+import com.smartlogis.userservice.application.service.AuthService;
 import com.smartlogis.userservice.domain.UserRole;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakException;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakMessageCode;

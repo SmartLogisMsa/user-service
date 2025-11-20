@@ -8,7 +8,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
-import com.smartlogis.userservice.application.AuthTokenService;
+import com.smartlogis.userservice.application.service.AuthTokenService;
 import com.smartlogis.userservice.application.dto.TokenInfoResult;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakProperties;
 

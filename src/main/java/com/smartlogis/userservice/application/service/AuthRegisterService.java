@@ -1,4 +1,4 @@
-package com.smartlogis.userservice.application;
+package com.smartlogis.userservice.application.service;
 
 import com.smartlogis.userservice.application.dto.AuthUserResult;
 
