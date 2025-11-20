@@ -1,14 +1,16 @@
 package com.smartlogis.userservice.infrastructure.keycloak.service;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClient;
 
 import com.smartlogis.userservice.application.AuthTokenService;
 import com.smartlogis.userservice.dto.TokenInfo;
-import com.smartlogis.userservice.infrastructure.keycloak.KeycloakException;
-import com.smartlogis.userservice.infrastructure.keycloak.KeycloakMessageCode;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakProperties;
-import com.smartlogis.userservice.infrastructure.keycloak.api.KeycloakTokenClient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,23 +19,31 @@ import lombok.RequiredArgsConstructor;
 @EnableConfigurationProperties(KeycloakProperties.class)
 public class KeycloakTokenService implements AuthTokenService {
 
-	private final KeycloakTokenClient client;
 	private final KeycloakProperties properties;
+
 
 	@Override
 	public TokenInfo generate(String username, String password) {
-		try {
-			return client.generate(
-				properties.realm(),
-				"password",
-				properties.clientId(),
-				properties.clientSecret(),
-				username,
-				password,
-				"openid profile email"
-			);
-		} catch (Exception e) {
-			throw new KeycloakException(KeycloakMessageCode.INTERNAL_FAILED, e);
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("grant_type", "password");
+		form.add("client_id", properties.clientId());
+		form.add("client_secret", properties.clientSecret());
+		form.add("username", username);
+		form.add("password", password);
+		form.add("scope", "openid profile email");
+
+		RestClient client = RestClient.create();
+		ResponseEntity<TokenInfo> res = client.post()
+			.uri(String.format("%s/realms/%s/protocol/openid-connect/token", properties.serverUrl(), properties.realm()))
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body(form)
+			.retrieve()
+			.toEntity(TokenInfo.class);
+
+		if (res.getStatusCode().is2xxSuccessful()) {
+			return res.getBody();
 		}
+
+		return null;
 	}
 }
