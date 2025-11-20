@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartlogis.userservice.application.AuthQueryService;
-import com.smartlogis.userservice.dto.AuthUser;
+import com.smartlogis.userservice.application.dto.AuthUserResult;
 import com.smartlogis.userservice.infrastructure.keycloak.dto.KeycloakUser;
 
 import lombok.RequiredArgsConstructor;
@@ -24,20 +24,20 @@ public class KeycloakQueryService implements AuthQueryService {
 	private final KeycloakHelper helper;
 
 	@Override
-	public AuthUser getUserById(UUID userId) {
+	public AuthUserResult getUserById(UUID userId) {
 		UserRepresentation user = helper.getUserById(userId.toString());
 
 		return KeycloakUser.from(user).toAuthUser();
 	}
 
 	@Override
-	public Page<AuthUser> getUsers(Pageable pageable) {
+	public Page<AuthUserResult> getUsers(Pageable pageable) {
 		List<UserRepresentation> keycloakUsers = helper.getUsersResource().list();
 
 		int start = (int) pageable.getOffset();
 		int end = Math.min(start + pageable.getPageSize(), keycloakUsers.size());
 
-		List<AuthUser> users = keycloakUsers.subList(start, end)
+		List<AuthUserResult> users = keycloakUsers.subList(start, end)
 			.stream()
 			.map(user -> KeycloakUser.from(user).toAuthUser())
 			.toList();

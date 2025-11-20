@@ -9,7 +9,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import com.smartlogis.userservice.application.AuthTokenService;
-import com.smartlogis.userservice.dto.TokenInfo;
+import com.smartlogis.userservice.application.dto.TokenInfoResult;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakProperties;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class KeycloakTokenService implements AuthTokenService {
 
 
 	@Override
-	public TokenInfo generate(String username, String password) {
+	public TokenInfoResult generate(String username, String password) {
 		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
 		form.add("grant_type", "password");
 		form.add("client_id", properties.clientId());
@@ -33,12 +33,12 @@ public class KeycloakTokenService implements AuthTokenService {
 		form.add("scope", "openid profile email");
 
 		RestClient client = RestClient.create();
-		ResponseEntity<TokenInfo> res = client.post()
+		ResponseEntity<TokenInfoResult> res = client.post()
 			.uri(String.format("%s/realms/%s/protocol/openid-connect/token", properties.serverUrl(), properties.realm()))
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.body(form)
 			.retrieve()
-			.toEntity(TokenInfo.class);
+			.toEntity(TokenInfoResult.class);
 
 		if (res.getStatusCode().is2xxSuccessful()) {
 			return res.getBody();
