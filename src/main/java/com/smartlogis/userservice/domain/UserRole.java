@@ -1,5 +1,8 @@
 package com.smartlogis.userservice.domain;
 
+import com.smartlogis.userservice.domain.exception.UserException;
+import com.smartlogis.userservice.domain.exception.UserMessageCode;
+
 public enum UserRole {
 	MASTER, HUB_MANAGER, DELIVERY_MANAGER, COMPANY_MANAGER;
 

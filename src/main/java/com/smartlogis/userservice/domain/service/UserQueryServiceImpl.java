@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartlogis.userservice.domain.User;
-import com.smartlogis.userservice.domain.UserException;
+import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.UserId;
-import com.smartlogis.userservice.domain.UserMessageCode;
-import com.smartlogis.userservice.domain.UserRepository;
+import com.smartlogis.userservice.domain.exception.UserMessageCode;
+import com.smartlogis.userservice.domain.repository.UserRepository;
 import com.smartlogis.userservice.domain.dto.UserSearch;
 
 import lombok.RequiredArgsConstructor;

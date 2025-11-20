@@ -4,6 +4,8 @@ import com.smartlogis.common.domain.AbstractEntity;
 import com.smartlogis.userservice.domain.dto.OrganizationInfo;
 import com.smartlogis.userservice.domain.dto.UserCreate;
 import com.smartlogis.userservice.domain.dto.UserInfoUpdate;
+import com.smartlogis.userservice.domain.exception.UserException;
+import com.smartlogis.userservice.domain.exception.UserMessageCode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

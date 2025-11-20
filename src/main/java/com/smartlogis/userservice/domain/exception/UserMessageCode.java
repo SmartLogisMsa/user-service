@@ -1,4 +1,4 @@
-package com.smartlogis.userservice.domain;
+package com.smartlogis.userservice.domain.exception;
 
 import org.springframework.http.HttpStatus;
 
