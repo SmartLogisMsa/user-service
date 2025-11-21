@@ -1,5 +1,7 @@
 package com.smartlogis.userservice.domain.dto;
 
+import java.util.Set;
+
 import com.smartlogis.userservice.domain.OrganizationId;
 import com.smartlogis.userservice.domain.OrganizationType;
 import com.smartlogis.userservice.domain.UserRole;
@@ -9,5 +11,5 @@ public record UserSearch (
 	OrganizationType organizationType,
 	OrganizationId organizationId,
 	UserStatus status,
-	UserRole role
+	Set<UserRole> roles
 ) {}
