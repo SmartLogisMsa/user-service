@@ -8,11 +8,11 @@ import com.smartlogis.userservice.application.dto.TokenInfoResult;
 import com.smartlogis.userservice.application.dto.UserInfoUpdateCommand;
 import com.smartlogis.userservice.application.dto.UserRegisterCommand;
 import com.smartlogis.userservice.application.dto.UserRoleUpdateCommand;
-import com.smartlogis.userservice.application.dto.UserRegisterResult;
+import com.smartlogis.userservice.presentation.dto.UserRegisterResponse;
 
 @Service
 public interface UserApplicationService {
-	UserRegisterResult register(UserRegisterCommand command);
+	UserRegisterResponse register(UserRegisterCommand command);
 	void updateInfo(UUID userId, UserInfoUpdateCommand command);
 	void updateRole(UUID userId, UserRoleUpdateCommand command);
 	TokenInfoResult login(String username, String password);

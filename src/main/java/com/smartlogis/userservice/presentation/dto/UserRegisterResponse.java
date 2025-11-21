@@ -1,4 +1,4 @@
-package com.smartlogis.userservice.application.dto;
+package com.smartlogis.userservice.presentation.dto;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import com.smartlogis.userservice.domain.User;
 import com.smartlogis.userservice.domain.UserRole;
 
-public record UserRegisterResult(
+public record UserRegisterResponse(
 	UUID id,
 	String username,
 	String slackId,
@@ -27,12 +27,12 @@ public record UserRegisterResult(
 	LocalDateTime deletedAt,
 	String deletedBy
 ) {
-	public static UserRegisterResult from(User user) {
+	public static UserRegisterResponse from(User user) {
 		Set<String> roleValues = user.getRoles().stream()
 			.map(UserRole::getValue)
 			.collect(Collectors.toSet());
 
-		return new UserRegisterResult(
+		return new UserRegisterResponse(
 			user.getId().toUuid(),
 			user.getUsername(),
 			user.getSlackId(),

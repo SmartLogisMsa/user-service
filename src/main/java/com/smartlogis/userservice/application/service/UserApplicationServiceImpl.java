@@ -9,7 +9,7 @@ import com.smartlogis.userservice.application.dto.AuthUserResult;
 import com.smartlogis.userservice.application.dto.TokenInfoResult;
 import com.smartlogis.userservice.application.dto.UserInfoUpdateCommand;
 import com.smartlogis.userservice.application.dto.UserRegisterCommand;
-import com.smartlogis.userservice.application.dto.UserRegisterResult;
+import com.smartlogis.userservice.presentation.dto.UserRegisterResponse;
 import com.smartlogis.userservice.application.dto.UserRoleUpdateCommand;
 import com.smartlogis.userservice.domain.User;
 import com.smartlogis.userservice.domain.UserId;
@@ -35,11 +35,11 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 	private final AuthService authService;
 
 	@Override
-	public UserRegisterResult register(UserRegisterCommand command) {
+	public UserRegisterResponse register(UserRegisterCommand command) {
 		AuthUserResult auth = authRegisterService.register(command.username(), command.password());
 		User user = userService.register(command.toUserCreate(auth.id()));
 
-		return UserRegisterResult.from(user);
+		return UserRegisterResponse.from(user);
 	}
 
 	@Override
