@@ -1,11 +1,16 @@
 package com.smartlogis.userservice.domain;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.smartlogis.common.domain.AbstractEntity;
 import com.smartlogis.userservice.domain.dto.UserCreate;
 import com.smartlogis.userservice.domain.dto.UserInfoUpdate;
 import com.smartlogis.userservice.domain.dto.UserRoleUpdate;
 import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
+import com.smartlogis.userservice.global.validator.UserRoleValidator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -35,8 +40,12 @@ public class User extends AbstractEntity {
 	@Column(nullable = false)
 	private String slackId;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "organization_type")
+	OrganizationType organizationType;
+
 	@Embedded
-	Organization organization;
+	OrganizationId organizationId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -54,9 +63,9 @@ public class User extends AbstractEntity {
 	@Column(nullable = false)
 	private UserPhone phone;
 
-	@Enumerated(EnumType.STRING)
 	@Column
-	private UserRole role;
+	@Getter(AccessLevel.NONE)
+	private String roles;
 
 	public static User create(UserCreate request) {
 		User user = new User();
@@ -92,11 +101,14 @@ public class User extends AbstractEntity {
 	}
 
 	public void updateOrganization(UserRoleUpdate request) {
-		UserValidator.validateOrganization(request.organization());
-		UserValidator.validateRole(request.organization().getType(), request.role());
+		UserValidator.validateOrganization(request.organizationType(), request.organizationId());
+		UserValidator.validateRole(request.roles());
 
-		this.organization = request.organization();
-		this.role = request.role();
+		UserRoleValidator.validateOrganizationRole(request.organizationType(), request.roles());
+
+		this.organizationType = request.organizationType();
+		this.organizationId = request.organizationId();
+		setRoles(request.roles());
 	}
 
 	public void approve() {
@@ -111,5 +123,18 @@ public class User extends AbstractEntity {
 			throw new UserException(UserMessageCode.INVALID_STATUS_CHANGE);
 		}
 		this.status = UserStatus.REJECT;
+	}
+
+	public Set<UserRole> getRoles() {
+		if (roles == null || roles.isBlank()) return Set.of();
+		return Arrays.stream(roles.split(","))
+			.map(UserRole::fromString)
+			.collect(Collectors.toSet());
+	}
+
+	private void setRoles(Set<UserRole> roles) {
+		this.roles = roles.stream()
+			.map(UserRole::getValue)
+			.collect(Collectors.joining(","));
 	}
 }

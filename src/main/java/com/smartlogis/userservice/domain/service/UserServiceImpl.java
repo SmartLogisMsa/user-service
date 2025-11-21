@@ -34,23 +34,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User updateInfo(UserId userId, UserInfoUpdate userInfoUpdate) {
+	public void updateInfo(UserId userId, UserInfoUpdate userInfoUpdate) {
 		User user = repository.findById(userId)
 			.orElseThrow(() -> new UserException(UserMessageCode.USER_NOT_FOUND));
 
 		user.updateInfo(userInfoUpdate);
-
-		return user;
 	}
 
 	@Override
-	public User updateRole(UserId userId, @Valid UserRoleUpdate userRoleUpdate) {
+	public void updateRole(UserId userId, @Valid UserRoleUpdate userRoleUpdate) {
 		User user = repository.findById(userId)
 			.orElseThrow(() -> new UserException(UserMessageCode.USER_NOT_FOUND));
 
 		user.updateOrganization(userRoleUpdate);
-
-		return user;
 	}
 
 }

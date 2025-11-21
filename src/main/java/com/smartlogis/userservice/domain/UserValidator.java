@@ -1,7 +1,5 @@
 package com.smartlogis.userservice.domain;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 
 import lombok.AccessLevel;
@@ -9,13 +7,6 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class UserValidator {
-
-	private static final EnumMap<OrganizationType, Set<UserRole>> VALID_ROLE_MAP =
-		new EnumMap<>(Map.of(
-			OrganizationType.MASTER, Set.of(UserRole.MASTER),
-			OrganizationType.HUB, Set.of(UserRole.HUB_MANAGER, UserRole.DELIVERY_MANAGER),
-			OrganizationType.COMPANY, Set.of(UserRole.COMPANY_MANAGER)
-		));
 
 	public static void validateId(UserId id) {
 		if (id == null || id.getId() == null) {
@@ -39,8 +30,8 @@ class UserValidator {
 		}
 	}
 
-	public static void validateOrganization(Organization organization) {
-		if (organization == null || organization.getType() == null || organization.getId() == null || organization.getId().getId() == null) {
+	public static void validateOrganization(OrganizationType type, OrganizationId id) {
+		if (type == null || id == null) {
 			throw new IllegalArgumentException("소속 정보(organization)는 비어 있을 수 없습니다.");
 		}
 	}
@@ -69,14 +60,9 @@ class UserValidator {
 		}
 	}
 
-	public static void validateRole(OrganizationType type, UserRole role) {
-		if (role == null) {
+	public static void validateRole(Set<UserRole> roles) {
+		if (roles == null) {
 			throw new IllegalArgumentException("역할(role)은 비어 있을 수 없습니다.");
-		}
-
-		Set<UserRole> validRoles = VALID_ROLE_MAP.get(type);
-		if (validRoles == null || !validRoles.contains(role)) {
-			throw new IllegalArgumentException(String.format("유효하지 않은 조합(소속, 역할)입니다.: type=%s, role=%s", type, role));
 		}
 	}
 

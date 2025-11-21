@@ -1,12 +1,10 @@
 package com.smartlogis.userservice.application.service;
 
-import java.util.UUID;
-
-import com.smartlogis.userservice.domain.UserRole;
+import java.util.Set;
 
 public interface AuthService {
-	void addRole(UUID userId, UserRole role);
-	void removeRole(UUID userId, UserRole role);
-	void logout(UUID userId);
-	void deleteById(UUID userId);
+	void addRole(String userId, Set<String> roles);
+	void removeRole(String userId, Set<String> roles);
+	void logout(String userId);
+	void deleteById(String userId);
 }

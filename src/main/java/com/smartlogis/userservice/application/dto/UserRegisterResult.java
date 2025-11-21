@@ -1,24 +1,25 @@
-package com.smartlogis.userservice.presentation.dto;
+package com.smartlogis.userservice.application.dto;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import com.smartlogis.userservice.domain.Organization;
 import com.smartlogis.userservice.domain.User;
 import com.smartlogis.userservice.domain.UserRole;
-import com.smartlogis.userservice.domain.UserStatus;
 
-public record UserRegisterResponse (
+public record UserRegisterResult(
 	UUID id,
 	String username,
 	String slackId,
-	Organization organization,
-	UserStatus status,
+	String organizationType,
+	UUID organizationId,
+	String status,
 	String firstName,
 	String lastName,
 	String email,
 	String phone,
-	UserRole role,
+	Set<String> roles,
 	LocalDateTime createdAt,
 	String createdBy,
 	LocalDateTime updatedAt,
@@ -26,18 +27,23 @@ public record UserRegisterResponse (
 	LocalDateTime deletedAt,
 	String deletedBy
 ) {
-	public static UserRegisterResponse from(User user) {
-		return new UserRegisterResponse(
+	public static UserRegisterResult from(User user) {
+		Set<String> roleValues = user.getRoles().stream()
+			.map(UserRole::getValue)
+			.collect(Collectors.toSet());
+
+		return new UserRegisterResult(
 			user.getId().toUuid(),
 			user.getUsername(),
 			user.getSlackId(),
-			user.getOrganization(),
-			user.getStatus(),
+			user.getOrganizationType().getValue(),
+			user.getOrganizationId().toUuid(),
+			user.getStatus().getValue(),
 			user.getFirstName(),
 			user.getLastName(),
 			user.getEmail(),
 			user.getPhone().formatted(),
-			user.getRole(),
+			roleValues,
 			user.getCreatedAt(),
 			user.getCreatedBy(),
 			user.getUpdatedAt(),

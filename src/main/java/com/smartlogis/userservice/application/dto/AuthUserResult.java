@@ -1,6 +1,6 @@
 package com.smartlogis.userservice.application.dto;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.smartlogis.userservice.domain.UserRole;
@@ -8,5 +8,5 @@ import com.smartlogis.userservice.domain.UserRole;
 public record AuthUserResult(
 	UUID id,
 	String username,
-	List<UserRole> roles
+	Set<UserRole> roles
 ) {}

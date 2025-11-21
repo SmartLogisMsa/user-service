@@ -10,6 +10,6 @@ import jakarta.validation.Valid;
 
 public interface UserService {
 	User register(@Valid UserCreate userCreate);
-	User updateInfo(UserId userId, @Valid UserInfoUpdate userInfoUpdate);
-	User updateRole(UserId userId, @Valid UserRoleUpdate userRoleUpdate);
+	void updateInfo(UserId userId, @Valid UserInfoUpdate userInfoUpdate);
+	void updateRole(UserId userId, @Valid UserRoleUpdate userRoleUpdate);
 }
