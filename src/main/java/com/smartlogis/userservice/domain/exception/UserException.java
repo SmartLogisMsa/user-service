@@ -1,4 +1,4 @@
-package com.smartlogis.userservice.domain;
+package com.smartlogis.userservice.domain.exception;
 
 import com.smartlogis.common.exception.AbstractException;
 import com.smartlogis.common.exception.MessageCode;

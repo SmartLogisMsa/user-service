@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.smartlogis.userservice.application.AuthRegisterService;
-import com.smartlogis.userservice.dto.AuthUser;
+import com.smartlogis.userservice.application.dto.AuthUserResult;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakException;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakMessageCode;
 import com.smartlogis.userservice.infrastructure.keycloak.dto.KeycloakUser;
@@ -22,7 +22,7 @@ public class KeycloakRegisterService implements AuthRegisterService {
 	private final KeycloakHelper helper;
 
 	@Override
-	public AuthUser register(String username, String password) {
+	public AuthUserResult register(String username, String password) {
 		UserRepresentation user = createUser(username);
 
 		registerUser(user);

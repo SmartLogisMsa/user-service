@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.smartlogis.userservice.dto.AuthUser;
+import com.smartlogis.userservice.application.dto.AuthUserResult;
 
 public interface AuthQueryService {
-	AuthUser getUserById(UUID userId);
-	Page<AuthUser> getUsers(Pageable pageable);
+	AuthUserResult getUserById(UUID userId);
+	Page<AuthUserResult> getUsers(Pageable pageable);
 }

@@ -6,15 +6,15 @@ import java.util.UUID;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import com.smartlogis.userservice.domain.UserRole;
-import com.smartlogis.userservice.dto.AuthUser;
+import com.smartlogis.userservice.application.dto.AuthUserResult;
 
 public record KeycloakUser(
 	String id,
 	String username,
 	List<String> roles
 ) {
-	public AuthUser toAuthUser() {
-		return new AuthUser(
+	public AuthUserResult toAuthUser() {
+		return new AuthUserResult(
 			UUID.fromString(this.id),
 			this.username,
 			this.roles.stream().map(UserRole::fromString).toList()
