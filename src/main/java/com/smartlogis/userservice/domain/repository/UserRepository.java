@@ -13,5 +13,6 @@ import com.smartlogis.userservice.domain.dto.UserSearch;
 public interface UserRepository extends Repository<User, UserId>, UserRepositoryCustom {
 	User save(User user);
 	Optional<User> findById(UserId userId);
+	Optional<User> findByUsername(String username);
 	Page<User> search(UserSearch search, Pageable pageable);
 }

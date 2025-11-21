@@ -28,6 +28,12 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
+	public User getUserByUsername(String username) {
+		return repository.findByUsername(username)
+			.orElseThrow(() -> new UserException(UserMessageCode.USER_NOT_FOUND));
+	}
+
+	@Override
 	public Page<User> getUsers(UserSearch search, Pageable pageable) {
 		return repository.search(search, pageable);
 	}
