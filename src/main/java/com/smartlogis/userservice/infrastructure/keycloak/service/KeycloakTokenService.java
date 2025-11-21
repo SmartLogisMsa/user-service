@@ -8,8 +8,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
-import com.smartlogis.userservice.application.service.AuthTokenService;
+import com.smartlogis.userservice.application.dto.TokenInfo;
 import com.smartlogis.userservice.application.dto.TokenInfoResult;
+import com.smartlogis.userservice.application.service.AuthTokenService;
+import com.smartlogis.userservice.infrastructure.keycloak.KeycloakException;
+import com.smartlogis.userservice.infrastructure.keycloak.KeycloakMessageCode;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakProperties;
 
 import lombok.RequiredArgsConstructor;
@@ -33,17 +36,21 @@ public class KeycloakTokenService implements AuthTokenService {
 		form.add("scope", "openid profile email");
 
 		RestClient client = RestClient.create();
-		ResponseEntity<TokenInfoResult> res = client.post()
-			.uri(String.format("%s/realms/%s/protocol/openid-connect/token", properties.serverUrl(), properties.realm()))
-			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-			.body(form)
-			.retrieve()
-			.toEntity(TokenInfoResult.class);
+		try {
+			ResponseEntity<TokenInfo> res = client.post()
+				.uri(String.format("%s/realms/%s/protocol/openid-connect/token", properties.serverUrl(), properties.realm()))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.body(form)
+				.retrieve()
+				.toEntity(TokenInfo.class);
 
-		if (res.getStatusCode().is2xxSuccessful()) {
-			return res.getBody();
+			if (res.getStatusCode().is2xxSuccessful() && res.getBody() != null) {
+				return res.getBody().toTokenInfoResult();
+			} else {
+				throw new KeycloakException(KeycloakMessageCode.INTERNAL_FAILED, "Keycloak 토큰 발급에 실패하였습니다.");
+			}
+		} catch (Exception e) {
+			throw new KeycloakException(KeycloakMessageCode.INTERNAL_FAILED, e);
 		}
-
-		return null;
 	}
 }
