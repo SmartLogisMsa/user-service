@@ -1,0 +1,26 @@
+server:
+  port: 3010
+
+spring:
+  application:
+    name: user-service
+  config:
+    import:
+      - 'optional:configserver:'
+      - optional:file:.env.${spring.profiles.active}
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+
+eureka:
+  instance:
+    prefer-ip-address: false
+    hostname: code-factory.co.kr
+
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:3150/eureka/
