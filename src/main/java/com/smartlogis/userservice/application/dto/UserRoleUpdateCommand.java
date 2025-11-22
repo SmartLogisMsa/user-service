@@ -13,13 +13,15 @@ import com.smartlogis.userservice.presentation.dto.UserRoleUpdateRequest;
 public record UserRoleUpdateCommand(
 	OrganizationType organizationType,
 	UUID organizationId,
-	Set<String> roles
+	Set<UserRole> roles
 ) {
 	public static UserRoleUpdateCommand of(UserRoleUpdateRequest request) {
 		return new UserRoleUpdateCommand(
 			OrganizationType.valueOf(request.getOrganizationType()),
 			request.getOrganizationId(),
-			request.getRoles()
+			request.getRoles().stream()
+				.map(UserRole::fromString)
+				.collect(Collectors.toSet())
 		);
 	}
 
@@ -27,13 +29,11 @@ public record UserRoleUpdateCommand(
 		return new UserRoleUpdate(
 			this.organizationType,
 			OrganizationId.of(organizationId),
-			getRoles()
+			this.roles
 		);
 	}
 
-	public Set<UserRole> getRoles() {
-		return roles().stream()
-			.map(UserRole::fromString)
-			.collect(Collectors.toSet());
+	public Set<String> getRoleStrings() {
+		return this.roles.stream().map(UserRole::toString).collect(Collectors.toSet());
 	}
 }

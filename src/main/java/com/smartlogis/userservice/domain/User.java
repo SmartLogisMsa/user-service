@@ -10,7 +10,6 @@ import com.smartlogis.userservice.domain.dto.UserInfoUpdate;
 import com.smartlogis.userservice.domain.dto.UserRoleUpdate;
 import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
-import com.smartlogis.userservice.global.validator.UserRoleValidator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -67,6 +66,19 @@ public class User extends AbstractEntity {
 	@Getter(AccessLevel.NONE)
 	private String roles;
 
+	public Set<UserRole> getRoles() {
+		if (roles == null || roles.isBlank()) return Set.of();
+		return Arrays.stream(roles.split(","))
+			.map(UserRole::fromString)
+			.collect(Collectors.toSet());
+	}
+
+	private void setRoles(Set<UserRole> roles) {
+		this.roles = roles.stream()
+			.map(UserRole::getValue)
+			.collect(Collectors.joining(","));
+	}
+
 	public static User create(UserCreate request) {
 		User user = new User();
 
@@ -104,7 +116,7 @@ public class User extends AbstractEntity {
 		UserValidator.validateOrganization(request.organizationType(), request.organizationId());
 		UserValidator.validateRole(request.roles());
 
-		UserRoleValidator.validateOrganizationRole(request.organizationType(), request.roles());
+		validateOrganizationRole(request.organizationType(), request.roles());
 
 		this.organizationType = request.organizationType();
 		this.organizationId = request.organizationId();
@@ -125,16 +137,20 @@ public class User extends AbstractEntity {
 		this.status = UserStatus.REJECT;
 	}
 
-	public Set<UserRole> getRoles() {
-		if (roles == null || roles.isBlank()) return Set.of();
-		return Arrays.stream(roles.split(","))
-			.map(UserRole::fromString)
-			.collect(Collectors.toSet());
+	public void validateOrganizationRole(OrganizationType type, Set<UserRole> roles) {
+		if (!UserRoleValidator.isValid(type, roles)) {
+			throw new UserException(UserMessageCode.INVALID_ORGANIZATION_ROLE, type, roles);
+		}
 	}
 
-	private void setRoles(Set<UserRole> roles) {
-		this.roles = roles.stream()
-			.map(UserRole::getValue)
-			.collect(Collectors.joining(","));
+	public void validateOrganizationAccess(OrganizationId id) {
+		if (!this.getRoles().isEmpty() || this.getRoles().contains(UserRole.HUB_MANAGER)) {
+			if (this.organizationId == null) {
+				throw new UserException(UserMessageCode.MISSING_ORGANIZATION_ID);
+			}
+			if (!this.organizationId.equals(id)) {
+				throw new UserException(UserMessageCode.ORGANIZATION_ACCESS_DENIED, this.organizationId);
+			}
+		}
 	}
 }

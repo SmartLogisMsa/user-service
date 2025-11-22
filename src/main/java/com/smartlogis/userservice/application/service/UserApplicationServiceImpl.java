@@ -18,7 +18,7 @@ import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
 import com.smartlogis.userservice.domain.service.UserQueryService;
 import com.smartlogis.userservice.domain.service.UserService;
-import com.smartlogis.userservice.global.validator.UserRoleValidator;
+import com.smartlogis.userservice.presentation.dto.UserInfoResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,24 +44,22 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
 	@Override
 	public void updateInfo(UUID userId, UserInfoUpdateCommand command) {
-		userQueryService.getUserById(UserId.of(userId));
 		userService.updateInfo(UserId.of(userId), command.toUserInfoUpdate());
 	}
 
 	@Override
 	public void updateRole(UUID userId, UserRoleUpdateCommand command) {
-		UserRoleValidator.validateOrganizationRole(command.organizationType(), command.getRoles());
+		User user = userQueryService.getUserById(UserId.of(userId));
+		user.validateOrganizationRole(command.organizationType(), command.roles());
 
-		userQueryService.getUserById(UserId.of(userId));
-
-		authService.removeRole(userId.toString(), command.roles());
-		authService.addRole(userId.toString(), command.roles());
+		authService.removeRole(userId.toString(), command.getRoleStrings());
+		authService.addRole(userId.toString(), command.getRoleStrings());
 
 		userService.updateRole(UserId.of(userId), command.toUserRoleUpdate());
 	}
 
 	@Override
-	public TokenInfoResult login(String username, String password) {
+	public TokenInfoResponse login(String username, String password) {
 		User user = userQueryService.getUserByUsername(username);
 		if (user.getStatus() != UserStatus.APPROVE) {
 			throw new UserException(UserMessageCode.USER_NOT_APPROVED);
