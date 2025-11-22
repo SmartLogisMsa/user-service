@@ -20,6 +20,8 @@ public interface UserService {
 	void register(UserRegisterCommand command);
 	void updateInfo(UUID requestedId, UUID userId, UserInfoUpdateCommand command);
 	void updateRole(UUID requestedId, UUID userId, UserRoleUpdateCommand command);
+	void approve(UUID requestedId, UUID userId, UserRoleUpdateCommand command);
+	void reject(UUID requestedId, UUID userId);
 	TokenInfoResponse login(String username, String password);
 	void logout(UUID userId);
 	void delete(UUID userId);

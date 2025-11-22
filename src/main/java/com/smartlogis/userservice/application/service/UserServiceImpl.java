@@ -83,6 +83,27 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void approve(UUID requestedId, UUID userId, UserRoleUpdateCommand command) {
+		User user = userQueryService.getUserById(UserId.of(userId));
+		userRoleService.verifyOrganizationAccess(requestedId, command.organizationId());
+
+		user.validateOrganizationRole(command.organizationType(), command.roles());
+
+		authService.addRole(userId.toString(), command.getRoleStrings());
+		userUpdateService.updateRole(UserId.of(userId), command.toUserRoleUpdate());
+		user.approve();
+	}
+
+	@Override
+	public void reject(UUID requestedId, UUID userId) {
+		User user = userQueryService.getUserById(UserId.of(userId));
+		userRoleService.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
+
+		authService.deleteById(userId.toString());
+		user.delete();
+	}
+
+	@Override
 	public TokenInfoResponse login(String username, String password) {
 		User user = userQueryService.getUserByUsername(username);
 		if (user.getStatus() != UserStatus.APPROVE) {
