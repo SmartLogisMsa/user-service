@@ -2,6 +2,7 @@ package com.smartlogis.userservice.application.service;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,9 @@ import com.smartlogis.userservice.application.dto.UserInfoUpdateCommand;
 import com.smartlogis.userservice.application.dto.UserRegisterCommand;
 import com.smartlogis.userservice.presentation.dto.UserRegisterResponse;
 import com.smartlogis.userservice.application.dto.UserRoleUpdateCommand;
+import com.smartlogis.common.presentation.dto.PageResponse;
+import com.smartlogis.userservice.application.dto.PageCommand;
+import com.smartlogis.userservice.application.dto.UserSearchCommand;
 import com.smartlogis.userservice.domain.User;
 import com.smartlogis.userservice.domain.UserId;
 import com.smartlogis.userservice.domain.UserStatus;
@@ -33,6 +37,24 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 	private final AuthRegisterService authRegisterService;
 	private final AuthTokenService authTokenService;
 	private final AuthService authService;
+
+	@Override
+	public UserInfoResponse getUserById(UUID userId) {
+		User user = userQueryService.getUserById(UserId.of(userId));
+
+		return UserInfoResponse.from(user);
+	}
+
+	@Override
+	public PageResponse<UserInfoResponse> getUsers(UUID requestedId, UserSearchCommand search, PageCommand page) {
+		User user = userQueryService.getUserById(UserId.of(requestedId));
+
+		user.validateOrganizationAccess(search.organizationId());
+
+		Page<User> users = userQueryService.getUsers(search.toUserSearch(), page.getPageable());
+
+		return PageResponse.from(users, UserInfoResponse.class);
+	}
 
 	@Override
 	public UserRegisterResponse register(UserRegisterCommand command) {
