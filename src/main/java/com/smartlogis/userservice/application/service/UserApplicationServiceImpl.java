@@ -33,6 +33,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
 	private final UserService userService;
 	private final UserQueryService userQueryService;
+	private final UserRoleService userRoleService;
 
 	private final AuthRegisterService authRegisterService;
 	private final AuthTokenService authTokenService;
@@ -47,9 +48,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
 	@Override
 	public PageResponse<UserInfoResponse> getUsers(UUID requestedId, UserSearchCommand search, PageCommand page) {
-		User user = userQueryService.getUserById(UserId.of(requestedId));
-
-		user.validateOrganizationAccess(search.organizationId());
+		userRoleService.verifyOrganizationAccess(requestedId, search.organizationId().toUuid());
 
 		Page<User> users = userQueryService.getUsers(search.toUserSearch(), page.getPageable());
 
@@ -65,13 +64,18 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 	}
 
 	@Override
-	public void updateInfo(UUID userId, UserInfoUpdateCommand command) {
+	public void updateInfo(UUID requestedId, UUID userId, UserInfoUpdateCommand command) {
+		User user = userQueryService.getUserById(UserId.of(userId));
+		userRoleService.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
+
 		userService.updateInfo(UserId.of(userId), command.toUserInfoUpdate());
 	}
 
 	@Override
-	public void updateRole(UUID userId, UserRoleUpdateCommand command) {
+	public void updateRole(UUID requestedId, UUID userId, UserRoleUpdateCommand command) {
 		User user = userQueryService.getUserById(UserId.of(userId));
+		userRoleService.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
+
 		user.validateOrganizationRole(command.organizationType(), command.roles());
 
 		authService.removeRole(userId.toString(), command.getRoleStrings());

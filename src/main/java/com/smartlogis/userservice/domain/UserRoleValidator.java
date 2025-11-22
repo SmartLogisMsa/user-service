@@ -8,7 +8,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserRoleValidator {
+class UserRoleValidator {
 
 	private static final EnumMap<OrganizationType, Set<UserRole>> VALID_ROLE_MAP =
 		new EnumMap<>(Map.of(

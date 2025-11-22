@@ -19,8 +19,8 @@ public interface UserApplicationService {
 	UserInfoResponse getUserById(UUID userId);
 	PageResponse<UserInfoResponse> getUsers(UUID requestedId, UserSearchCommand search, PageCommand page);
 	UserRegisterResponse register(UserRegisterCommand command);
-	void updateInfo(UUID userId, UserInfoUpdateCommand command);
-	void updateRole(UUID userId, UserRoleUpdateCommand command);
+	void updateInfo(UUID requestedId, UUID userId, UserInfoUpdateCommand command);
+	void updateRole(UUID requestedId, UUID userId, UserRoleUpdateCommand command);
 	TokenInfoResponse login(String username, String password);
 	void logout(UUID userId);
 	void delete(UUID userId);

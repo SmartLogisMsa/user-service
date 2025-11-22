@@ -142,15 +142,4 @@ public class User extends AbstractEntity {
 			throw new UserException(UserMessageCode.INVALID_ORGANIZATION_ROLE, type, roles);
 		}
 	}
-
-	public void validateOrganizationAccess(OrganizationId id) {
-		if (!this.getRoles().isEmpty() || this.getRoles().contains(UserRole.HUB_MANAGER)) {
-			if (this.organizationId == null) {
-				throw new UserException(UserMessageCode.MISSING_ORGANIZATION_ID);
-			}
-			if (!this.organizationId.equals(id)) {
-				throw new UserException(UserMessageCode.ORGANIZATION_ACCESS_DENIED, this.organizationId);
-			}
-		}
-	}
 }
