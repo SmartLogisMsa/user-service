@@ -40,7 +40,7 @@ public class User extends AbstractEntity {
 	private String slackId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "organization_type")
+	@Column
 	OrganizationType organizationType;
 
 	@Embedded
