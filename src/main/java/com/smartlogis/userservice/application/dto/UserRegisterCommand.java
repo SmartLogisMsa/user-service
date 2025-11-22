@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.smartlogis.userservice.domain.UserId;
 import com.smartlogis.userservice.domain.UserPhone;
 import com.smartlogis.userservice.domain.dto.UserCreate;
+import com.smartlogis.userservice.presentation.dto.UserRegisterRequest;
 
 public record UserRegisterCommand(
 	String username,
@@ -13,8 +14,20 @@ public record UserRegisterCommand(
 	String firstName,
 	String lastName,
 	String email,
-	String phone
+	UserPhone phone
 ) {
+	public static UserRegisterCommand of(UserRegisterRequest request) {
+		return new UserRegisterCommand(
+			request.getUsername(),
+			request.getPassword(),
+			request.getSlackId(),
+			request.getFirstName(),
+			request.getLastName(),
+			request.getEmail(),
+			UserPhone.of(request.getPhone())
+		);
+	}
+
 	public UserCreate toUserCreate(UUID userId) {
 		return new UserCreate(
 			UserId.of(userId),
@@ -23,7 +36,7 @@ public record UserRegisterCommand(
 			this.firstName,
 			this.lastName,
 			this.email,
-			UserPhone.of(this.phone)
+			this.phone
 		);
 	}
 }
