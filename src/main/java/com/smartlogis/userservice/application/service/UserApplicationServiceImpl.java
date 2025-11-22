@@ -6,14 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartlogis.common.presentation.dto.PageResponse;
 import com.smartlogis.userservice.application.dto.AuthUserResult;
-import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
+import com.smartlogis.userservice.application.dto.PageCommand;
 import com.smartlogis.userservice.application.dto.UserInfoUpdateCommand;
 import com.smartlogis.userservice.application.dto.UserRegisterCommand;
-import com.smartlogis.userservice.presentation.dto.UserRegisterResponse;
 import com.smartlogis.userservice.application.dto.UserRoleUpdateCommand;
-import com.smartlogis.common.presentation.dto.PageResponse;
-import com.smartlogis.userservice.application.dto.PageCommand;
 import com.smartlogis.userservice.application.dto.UserSearchCommand;
 import com.smartlogis.userservice.domain.User;
 import com.smartlogis.userservice.domain.UserId;
@@ -22,6 +20,7 @@ import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
 import com.smartlogis.userservice.domain.service.UserQueryService;
 import com.smartlogis.userservice.domain.service.UserService;
+import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
 import com.smartlogis.userservice.presentation.dto.UserInfoResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -56,11 +55,9 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 	}
 
 	@Override
-	public UserRegisterResponse register(UserRegisterCommand command) {
+	public void register(UserRegisterCommand command) {
 		AuthUserResult auth = authRegisterService.register(command.username(), command.password());
-		User user = userService.register(command.toUserCreate(auth.id()));
-
-		return UserRegisterResponse.from(user);
+		userService.register(command.toUserCreate(auth.id()));
 	}
 
 	@Override
