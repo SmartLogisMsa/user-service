@@ -58,6 +58,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void register(UserRegisterCommand command) {
+		userQueryService.findUserByUsername(command.username())
+			.ifPresent(user -> {
+				throw new UserException(UserMessageCode.USER_ALREADY_EXISTS, user.getStatus());
+			});
+
 		AuthUserResult auth = authRegisterService.register(command.username(), command.password());
 		userRegisterService.register(command.toUserCreate(auth.id()));
 	}
