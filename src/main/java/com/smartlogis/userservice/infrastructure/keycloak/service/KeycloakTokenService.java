@@ -8,7 +8,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
-import com.smartlogis.userservice.application.dto.TokenInfo;
+import com.smartlogis.userservice.infrastructure.keycloak.dto.TokenInfo;
 import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
 import com.smartlogis.userservice.application.service.AuthTokenService;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakException;
@@ -45,7 +45,7 @@ public class KeycloakTokenService implements AuthTokenService {
 				.toEntity(TokenInfo.class);
 
 			if (res.getStatusCode().is2xxSuccessful() && res.getBody() != null) {
-				return res.getBody().toTokenInfoResult();
+				return res.getBody().toTokenInfoResponse();
 			} else {
 				throw new KeycloakException(KeycloakMessageCode.INTERNAL_FAILED, "Keycloak 토큰 발급에 실패하였습니다.");
 			}

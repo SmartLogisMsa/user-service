@@ -1,4 +1,4 @@
-package com.smartlogis.userservice.application.dto;
+package com.smartlogis.userservice.infrastructure.keycloak.dto;
 
 import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
 
@@ -9,7 +9,7 @@ public record TokenInfo(
 	int refresh_expires_in,
 	String token_type
 ) {
-	public TokenInfoResponse toTokenInfoResult() {
+	public TokenInfoResponse toTokenInfoResponse() {
 		return new TokenInfoResponse(
 			this.access_token,
 			this.refresh_token,
