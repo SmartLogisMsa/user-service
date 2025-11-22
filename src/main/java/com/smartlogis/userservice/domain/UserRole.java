@@ -17,13 +17,13 @@ public enum UserRole {
 
 	private final String value;
 
-	public static UserRole fromString(String role) {
-		if (role == null || role.isBlank()) {
+	public static UserRole fromString(String str) {
+		if (str == null || str.isBlank()) {
 			return null;
 		}
 
 		try {
-			return UserRole.valueOf(role.toUpperCase());
+			return UserRole.valueOf(str.toUpperCase());
 		} catch (IllegalArgumentException e) {
 			throw new UserException(UserMessageCode.INVALID_ROLE, e);
 		}
