@@ -1,7 +1,7 @@
 package com.smartlogis.userservice.application.service;
 
-import com.smartlogis.userservice.application.dto.TokenInfoResult;
+import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
 
 public interface AuthTokenService {
-	TokenInfoResult generate(String username, String password);
+	TokenInfoResponse generate(String username, String password);
 }

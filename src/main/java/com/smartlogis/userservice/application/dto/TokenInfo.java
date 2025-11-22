@@ -1,5 +1,7 @@
 package com.smartlogis.userservice.application.dto;
 
+import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
+
 public record TokenInfo(
 	String access_token,
 	String refresh_token,
@@ -7,8 +9,8 @@ public record TokenInfo(
 	int refresh_expires_in,
 	String token_type
 ) {
-	public TokenInfoResult toTokenInfoResult() {
-		return new TokenInfoResult(
+	public TokenInfoResponse toTokenInfoResult() {
+		return new TokenInfoResponse(
 			this.access_token,
 			this.refresh_token,
 			this.expires_in,

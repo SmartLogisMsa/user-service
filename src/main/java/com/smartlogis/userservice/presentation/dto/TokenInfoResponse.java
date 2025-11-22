@@ -1,6 +1,6 @@
-package com.smartlogis.userservice.application.dto;
+package com.smartlogis.userservice.presentation.dto;
 
-public record TokenInfoResult(
+public record TokenInfoResponse(
 	String accessToken,
 	String refreshToken,
 	int expiresIn,

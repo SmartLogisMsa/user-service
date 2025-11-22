@@ -9,7 +9,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import com.smartlogis.userservice.application.dto.TokenInfo;
-import com.smartlogis.userservice.application.dto.TokenInfoResult;
+import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
 import com.smartlogis.userservice.application.service.AuthTokenService;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakException;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakMessageCode;
@@ -26,7 +26,7 @@ public class KeycloakTokenService implements AuthTokenService {
 
 
 	@Override
-	public TokenInfoResult generate(String username, String password) {
+	public TokenInfoResponse generate(String username, String password) {
 		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
 		form.add("grant_type", "password");
 		form.add("client_id", properties.clientId());

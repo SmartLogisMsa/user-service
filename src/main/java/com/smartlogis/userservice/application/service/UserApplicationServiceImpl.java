@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smartlogis.userservice.application.dto.AuthUserResult;
-import com.smartlogis.userservice.application.dto.TokenInfoResult;
+import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
 import com.smartlogis.userservice.application.dto.UserInfoUpdateCommand;
 import com.smartlogis.userservice.application.dto.UserRegisterCommand;
 import com.smartlogis.userservice.presentation.dto.UserRegisterResponse;
