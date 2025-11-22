@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
 		authService.removeRole(userId.toString(), command.getRoleStrings());
 		authService.addRole(userId.toString(), command.getRoleStrings());
-		userUpdateService.updateRole(UserId.of(userId), command.toUserRoleUpdate());
+		userUpdateService.updateOrganization(UserId.of(userId), command.toUserRoleUpdate());
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 		user.validateOrganizationRole(command.organizationType(), command.roles());
 
 		authService.addRole(userId.toString(), command.getRoleStrings());
-		userUpdateService.updateRole(UserId.of(userId), command.toUserRoleUpdate());
+		userUpdateService.updateOrganization(UserId.of(userId), command.toUserRoleUpdate());
 		user.approve();
 	}
 
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
 		userRoleService.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
 
 		authService.deleteById(userId.toString());
-		user.delete();
+		user.reject();
 	}
 
 	@Override

@@ -40,7 +40,7 @@ public class User extends AbstractEntity {
 	private String slackId;
 
 	@Enumerated(EnumType.STRING)
-	@Column
+	@Column(nullable = false)
 	OrganizationType organizationType;
 
 	@Embedded
@@ -85,6 +85,8 @@ public class User extends AbstractEntity {
 		UserValidator.validateId(request.id());
 		UserValidator.validateUsername(request.username());
 		UserValidator.validateSlackId(request.slackId());
+		UserValidator.validateOrganizationType(request.organizationType());
+		UserValidator.validateOrganizationId(request.organizationId());
 		UserValidator.validateFirstName(request.firstName());
 		UserValidator.validateLastName(request.lastName());
 		UserValidator.validateEmail(request.email());
@@ -93,6 +95,8 @@ public class User extends AbstractEntity {
 		user.id = request.id();
 		user.username = request.username();
 		user.slackId = request.slackId();
+		user.organizationType = request.organizationType();
+		user.organizationId = request.organizationId();
 		user.firstName = request.firstName();
 		user.lastName = request.lastName();
 		user.email = request.email();
@@ -113,7 +117,8 @@ public class User extends AbstractEntity {
 	}
 
 	public void updateOrganization(UserRoleUpdate request) {
-		UserValidator.validateOrganization(request.organizationType(), request.organizationId());
+		UserValidator.validateOrganizationType(request.organizationType());
+		UserValidator.validateOrganizationId(request.organizationId());
 		UserValidator.validateRole(request.roles());
 
 		validateOrganizationRole(request.organizationType(), request.roles());
@@ -121,6 +126,14 @@ public class User extends AbstractEntity {
 		this.organizationType = request.organizationType();
 		this.organizationId = request.organizationId();
 		setRoles(request.roles());
+	}
+
+	public void updateRole(Set<UserRole> roles) {
+		UserValidator.validateRole(roles);
+
+		validateOrganizationRole(this.organizationType, roles);
+
+		setRoles(roles);
 	}
 
 	public void approve() {
