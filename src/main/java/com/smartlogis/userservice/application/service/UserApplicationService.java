@@ -24,4 +24,5 @@ public interface UserApplicationService {
 	TokenInfoResponse login(String username, String password);
 	void logout(UUID userId);
 	void delete(UUID userId);
+	void deleteForce(UUID requestedId, UUID userId);
 }

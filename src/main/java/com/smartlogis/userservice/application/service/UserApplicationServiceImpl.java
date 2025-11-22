@@ -105,4 +105,10 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 		authService.deleteById(userId.toString());
 		user.delete();
 	}
+
+	@Override
+	public void deleteForce(UUID requestedId, UUID userId) {
+		userRoleService.verifyMaster(requestedId);
+		delete(userId);
+	}
 }
