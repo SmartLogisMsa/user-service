@@ -19,7 +19,8 @@ import com.smartlogis.userservice.domain.UserStatus;
 import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
 import com.smartlogis.userservice.domain.service.UserQueryService;
-import com.smartlogis.userservice.domain.service.UserService;
+import com.smartlogis.userservice.domain.service.UserRegisterService;
+import com.smartlogis.userservice.domain.service.UserUpdateService;
 import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
 import com.smartlogis.userservice.presentation.dto.UserInfoResponse;
 
@@ -28,9 +29,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserApplicationServiceImpl implements UserApplicationService {
+public class UserServiceImpl implements UserService {
 
-	private final UserService userService;
+	private final UserRegisterService userRegisterService;
+	private final UserUpdateService userUpdateService;
 	private final UserQueryService userQueryService;
 	private final UserRoleService userRoleService;
 
@@ -57,7 +59,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 	@Override
 	public void register(UserRegisterCommand command) {
 		AuthUserResult auth = authRegisterService.register(command.username(), command.password());
-		userService.register(command.toUserCreate(auth.id()));
+		userRegisterService.register(command.toUserCreate(auth.id()));
 	}
 
 	@Override
@@ -65,7 +67,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 		User user = userQueryService.getUserById(UserId.of(userId));
 		userRoleService.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
 
-		userService.updateInfo(UserId.of(userId), command.toUserInfoUpdate());
+		userUpdateService.updateInfo(UserId.of(userId), command.toUserInfoUpdate());
 	}
 
 	@Override
@@ -77,8 +79,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
 		authService.removeRole(userId.toString(), command.getRoleStrings());
 		authService.addRole(userId.toString(), command.getRoleStrings());
-
-		userService.updateRole(UserId.of(userId), command.toUserRoleUpdate());
+		userUpdateService.updateRole(UserId.of(userId), command.toUserRoleUpdate());
 	}
 
 	@Override

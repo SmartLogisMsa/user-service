@@ -14,7 +14,7 @@ import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
 import com.smartlogis.userservice.presentation.dto.UserInfoResponse;
 
 @Service
-public interface UserApplicationService {
+public interface UserService {
 	UserInfoResponse getUserById(UUID userId);
 	PageResponse<UserInfoResponse> getUsers(UUID requestedId, UserSearchCommand search, PageCommand page);
 	void register(UserRegisterCommand command);

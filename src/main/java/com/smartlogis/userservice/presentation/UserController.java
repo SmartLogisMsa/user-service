@@ -27,7 +27,7 @@ import com.smartlogis.userservice.application.dto.UserInfoUpdateCommand;
 import com.smartlogis.userservice.application.dto.UserRegisterCommand;
 import com.smartlogis.userservice.application.dto.UserRoleUpdateCommand;
 import com.smartlogis.userservice.application.dto.UserSearchCommand;
-import com.smartlogis.userservice.application.service.UserApplicationService;
+import com.smartlogis.userservice.application.service.UserService;
 import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
 import com.smartlogis.userservice.presentation.dto.TokenInfoResponse;
@@ -47,12 +47,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/v1/users")
 public class UserController {
 
-	private final UserApplicationService userApplicationService;
+	private final UserService userService;
 
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<TokenInfoResponse>> login(@Valid @RequestBody TokenRequest tokenRequest) {
-		TokenInfoResponse token = userApplicationService.login(tokenRequest.getUsername(), tokenRequest.getPassword());
+		TokenInfoResponse token = userService.login(tokenRequest.getUsername(), tokenRequest.getPassword());
 
 		return ok(successWithDataOnly(token));
 	}
@@ -60,7 +60,7 @@ public class UserController {
 	@Operation(summary = "로그아웃")
 	@PostMapping("/logout")
 	public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal AuthenticatedUser authentication) {
-		userApplicationService.logout(UUID.fromString(authentication.getId()));
+		userService.logout(UUID.fromString(authentication.getId()));
 
 		return ok(success());
 	}
@@ -72,7 +72,7 @@ public class UserController {
 			throw new UserException(UserMessageCode.MISMATCH_PASSWORD_CONFIRM);
 		}
 
-		userApplicationService.register(UserRegisterCommand.of(request));
+		userService.register(UserRegisterCommand.of(request));
 
 		return ok(success());
 	}
@@ -80,7 +80,7 @@ public class UserController {
 	@Operation(summary = "로그인한 회원정보 조회")
 	@GetMapping
 	public ResponseEntity<ApiResponse<UserInfoResponse>> getUser(@AuthenticationPrincipal AuthenticatedUser authentication) {
-		UserInfoResponse user = userApplicationService.getUserById(UUID.fromString(authentication.getId()));
+		UserInfoResponse user = userService.getUserById(UUID.fromString(authentication.getId()));
 
 		return ok(successWithDataOnly(user));
 	}
@@ -91,7 +91,7 @@ public class UserController {
 	public ResponseEntity<ApiResponse<UserInfoResponse>> getUserById(
 		@PathVariable UUID userId
 	) {
-		UserInfoResponse user = userApplicationService.getUserById(userId);
+		UserInfoResponse user = userService.getUserById(userId);
 
 		return ok(successWithDataOnly(user));
 	}
@@ -106,7 +106,7 @@ public class UserController {
 	) {
 		UUID requestId = UUID.fromString(authentication.getId());
 		PageResponse<UserInfoResponse> users =
-			userApplicationService.getUsers(requestId, UserSearchCommand.of(search), PageCommand.of(page));
+			userService.getUsers(requestId, UserSearchCommand.of(search), PageCommand.of(page));
 
 		return ok(successWithDataOnly(users));
 	}
@@ -120,7 +120,7 @@ public class UserController {
 		@PathVariable UUID userId
 	) {
 		UUID requestId = UUID.fromString(authentication.getId());
-		userApplicationService.updateInfo(requestId, userId, UserInfoUpdateCommand.of(request));
+		userService.updateInfo(requestId, userId, UserInfoUpdateCommand.of(request));
 
 		return ok(success());
 	}
@@ -134,7 +134,7 @@ public class UserController {
 		@PathVariable UUID userId
 	) {
 		UUID requestId = UUID.fromString(authentication.getId());
-		userApplicationService.updateRole(requestId, userId, UserRoleUpdateCommand.of(request));
+		userService.updateRole(requestId, userId, UserRoleUpdateCommand.of(request));
 
 		return ok(success());
 	}
@@ -145,7 +145,7 @@ public class UserController {
 		@AuthenticationPrincipal AuthenticatedUser authentication
 	) {
 		UUID userId = UUID.fromString(authentication.getId());
-		userApplicationService.delete(userId);
+		userService.delete(userId);
 
 		return ok(success());
 	}
@@ -158,7 +158,7 @@ public class UserController {
 		@PathVariable UUID userId
 	) {
 		UUID requestId = UUID.fromString(authentication.getId());
-		userApplicationService.deleteForce(requestId, userId);
+		userService.deleteForce(requestId, userId);
 
 		return ok(success());
 	}
