@@ -162,4 +162,31 @@ public class UserController {
 
 		return ok(success());
 	}
+
+	@Operation(summary = "회원가입 승인")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
+	@PatchMapping("/{userId}/approve")
+	public ResponseEntity<ApiResponse<Void>> approve(
+		@AuthenticationPrincipal AuthenticatedUser authentication,
+		@Valid @RequestBody UserRoleUpdateRequest request,
+		@PathVariable UUID userId
+	) {
+		UUID requestId = UUID.fromString(authentication.getId());
+		userService.approve(requestId, userId, UserRoleUpdateCommand.of(request));
+
+		return ok(success());
+	}
+
+	@Operation(summary = "회원가입 거절")
+	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
+	@PatchMapping("/{userId}/approve")
+	public ResponseEntity<ApiResponse<Void>> reject(
+		@AuthenticationPrincipal AuthenticatedUser authentication,
+		@PathVariable UUID userId
+	) {
+		UUID requestId = UUID.fromString(authentication.getId());
+		userService.reject(requestId, userId);
+
+		return ok(success());
+	}
 }
