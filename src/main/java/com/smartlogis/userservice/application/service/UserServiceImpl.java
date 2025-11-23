@@ -137,9 +137,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void delete(UUID userId) {
 		User user = userQueryService.getUserById(UserId.of(userId));
-
 		authService.deleteById(userId.toString());
 		user.delete();
+
+		redisCacheService.remove(userId.toString());
 	}
 
 	@Override
