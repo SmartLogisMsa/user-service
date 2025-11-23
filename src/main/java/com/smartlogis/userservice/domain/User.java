@@ -143,6 +143,13 @@ public class User extends AbstractEntity {
 		this.status = UserStatus.APPROVE;
 	}
 
+	public void approveForce() {
+		if (this.status != UserStatus.REJECT) {
+			throw new UserException(UserMessageCode.INVALID_STATUS_CHANGE);
+		}
+		this.status = UserStatus.APPROVE;
+	}
+
 	public void reject() {
 		if (this.status != UserStatus.PENDING) {
 			throw new UserException(UserMessageCode.INVALID_STATUS_CHANGE);

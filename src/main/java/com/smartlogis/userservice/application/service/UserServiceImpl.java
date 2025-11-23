@@ -93,19 +93,31 @@ public class UserServiceImpl implements UserService {
 		userRoleService.verifyOrganizationAccess(requestedId, command.organizationId());
 
 		user.validateOrganizationRole(command.organizationType(), command.roles());
+		user.approve();
 
 		authService.addRole(userId.toString(), command.getRoleStrings());
 		userUpdateService.updateOrganization(UserId.of(userId), command.toUserRoleUpdate());
-		user.approve();
+	}
+
+	@Override
+	public void approveForce(UUID requestedId, UUID userId, UserRoleUpdateCommand command) {
+		User user = userQueryService.getUserById(UserId.of(userId));
+		userRoleService.verifyMaster(requestedId);
+
+		user.validateOrganizationRole(command.organizationType(), command.roles());
+		user.approveForce();
+
+		authService.addRole(userId.toString(), command.getRoleStrings());
+		userUpdateService.updateOrganization(UserId.of(userId), command.toUserRoleUpdate());
 	}
 
 	@Override
 	public void reject(UUID requestedId, UUID userId) {
 		User user = userQueryService.getUserById(UserId.of(userId));
 		userRoleService.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
+		user.reject();
 
 		authService.deleteById(userId.toString());
-		user.reject();
 	}
 
 	@Override

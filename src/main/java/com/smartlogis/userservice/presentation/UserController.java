@@ -140,7 +140,7 @@ public class UserController {
 	}
 
 	@Operation(summary = "회원 탈퇴")
-	@DeleteMapping
+	@DeleteMapping("/delete")
 	public ResponseEntity<ApiResponse<Void>> delete(
 		@AuthenticationPrincipal AuthenticatedUser authentication
 	) {
@@ -151,9 +151,9 @@ public class UserController {
 	}
 
 	@Operation(summary = "회원 강제 탈퇴 (관리자용)")
-	@PreAuthorize("hasAnyRole('MASTER')")
-	@DeleteMapping("/{userId}")
-	public ResponseEntity<ApiResponse<Void>> delete(
+	@PreAuthorize("hasRole('MASTER')")
+	@DeleteMapping("/{userId}/force-delete")
+	public ResponseEntity<ApiResponse<Void>> deleteForce(
 		@AuthenticationPrincipal AuthenticatedUser authentication,
 		@PathVariable UUID userId
 	) {
@@ -176,6 +176,21 @@ public class UserController {
 
 		return ok(success());
 	}
+
+	@Operation(summary = "회원가입 강제 승인 (관리자용)")
+	@PreAuthorize("hasRole('MASTER')")
+	@PatchMapping("/{userId}/force-approve")
+	public ResponseEntity<ApiResponse<Void>> approveForce(
+		@AuthenticationPrincipal AuthenticatedUser authentication,
+		@Valid @RequestBody UserRoleUpdateRequest request,
+		@PathVariable UUID userId
+	) {
+		UUID requestId = UUID.fromString(authentication.getId());
+		userService.approveForce(requestId, userId, UserRoleUpdateCommand.of(request));
+
+		return ok(success());
+	}
+
 
 	@Operation(summary = "회원가입 거절")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
