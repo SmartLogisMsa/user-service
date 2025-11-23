@@ -1,4 +1,4 @@
-package com.smartlogis.userservice.global.config;
+package com.smartlogis.userservice.config;
 
 import java.util.Arrays;
 import java.util.List;
