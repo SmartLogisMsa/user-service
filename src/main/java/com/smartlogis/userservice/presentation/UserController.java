@@ -127,7 +127,7 @@ public class UserController {
 
 	@Operation(summary = "회원 역할 수정")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
-	@PatchMapping("/{userId}")
+	@PatchMapping("/role/{userId}")
 	public ResponseEntity<ApiResponse<Void>> updateUserRole(
 		@AuthenticationPrincipal AuthenticatedUser authentication,
 		@Valid @RequestBody UserRoleUpdateRequest request,
@@ -194,7 +194,7 @@ public class UserController {
 
 	@Operation(summary = "회원가입 거절")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
-	@PatchMapping("/{userId}/approve")
+	@PatchMapping("/{userId}/reject")
 	public ResponseEntity<ApiResponse<Void>> reject(
 		@AuthenticationPrincipal AuthenticatedUser authentication,
 		@PathVariable UUID userId
