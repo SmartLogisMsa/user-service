@@ -7,7 +7,6 @@ spring:
   config:
     import:
       - 'optional:configserver:'
-      - optional:file:.env.${spring.profiles.active}
   cloud:
     config:
       discovery:

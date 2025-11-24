@@ -3,16 +3,27 @@ package com.smartlogis.userservice.domain;
 import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
 
-public enum UserRole {
-	MASTER, HUB_MANAGER, DELIVERY_MANAGER, COMPANY_MANAGER;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-	public static UserRole fromString(String role) {
-		if (role == null || role.isBlank()) {
+@Getter
+@RequiredArgsConstructor
+public enum UserRole {
+	MASTER("MASTER"),
+	HUB_MANAGER("HUB_MANAGER"),
+	DELIVERY_MANAGER("DELIVERY_MANAGER"),
+	COMPANY_MANAGER("COMPANY_MANAGER"),
+	;
+
+	private final String value;
+
+	public static UserRole fromString(String str) {
+		if (str == null || str.isBlank()) {
 			return null;
 		}
 
 		try {
-			return UserRole.valueOf(role.toUpperCase());
+			return UserRole.valueOf(str.toUpperCase());
 		} catch (IllegalArgumentException e) {
 			throw new UserException(UserMessageCode.INVALID_ROLE, e);
 		}

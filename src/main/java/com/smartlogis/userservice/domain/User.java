@@ -1,9 +1,13 @@
 package com.smartlogis.userservice.domain;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.smartlogis.common.domain.AbstractEntity;
-import com.smartlogis.userservice.domain.dto.OrganizationInfo;
 import com.smartlogis.userservice.domain.dto.UserCreate;
 import com.smartlogis.userservice.domain.dto.UserInfoUpdate;
+import com.smartlogis.userservice.domain.dto.UserRoleUpdate;
 import com.smartlogis.userservice.domain.exception.UserException;
 import com.smartlogis.userservice.domain.exception.UserMessageCode;
 
@@ -37,10 +41,10 @@ public class User extends AbstractEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column
-	private OrganizationType organizationType;
+	OrganizationType organizationType;
 
 	@Embedded
-	private OrganizationId organizationId;
+	OrganizationId organizationId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -58,28 +62,41 @@ public class User extends AbstractEntity {
 	@Column(nullable = false)
 	private UserPhone phone;
 
-	@Enumerated(EnumType.STRING)
 	@Column
-	private UserRole role;
+	@Getter(AccessLevel.NONE)
+	private String roles;
 
-	public static User create(UserCreate userCreate) {
+	public Set<UserRole> getRoles() {
+		if (roles == null || roles.isBlank()) return Set.of();
+		return Arrays.stream(roles.split(","))
+			.map(UserRole::fromString)
+			.collect(Collectors.toSet());
+	}
+
+	private void setRoles(Set<UserRole> roles) {
+		this.roles = roles.stream()
+			.map(UserRole::getValue)
+			.collect(Collectors.joining(","));
+	}
+
+	public static User create(UserCreate request) {
 		User user = new User();
 
-		UserValidator.validateId(userCreate.id());
-		UserValidator.validateUsername(userCreate.username());
-		UserValidator.validateSlackId(userCreate.slackId());
-		UserValidator.validateFirstName(userCreate.firstName());
-		UserValidator.validateLastName(userCreate.lastName());
-		UserValidator.validateEmail(userCreate.email());
-		UserValidator.validatePhone(userCreate.phone());
+		UserValidator.validateId(request.id());
+		UserValidator.validateUsername(request.username());
+		UserValidator.validateSlackId(request.slackId());
+		UserValidator.validateFirstName(request.firstName());
+		UserValidator.validateLastName(request.lastName());
+		UserValidator.validateEmail(request.email());
+		UserValidator.validatePhone(request.phone());
 
-		user.id = userCreate.id();
-		user.username = userCreate.username();
-		user.slackId = userCreate.slackId();
-		user.firstName = userCreate.firstName();
-		user.lastName = userCreate.lastName();
-		user.email = userCreate.email();
-		user.phone = userCreate.phone();
+		user.id = request.id();
+		user.username = request.username();
+		user.slackId = request.slackId();
+		user.firstName = request.firstName();
+		user.lastName = request.lastName();
+		user.email = request.email();
+		user.phone = request.phone();
 		user.status = UserStatus.PENDING;
 
 		user.createdBy(user.username);
@@ -87,21 +104,23 @@ public class User extends AbstractEntity {
 		return user;
 	}
 
-	public void updateInfo(UserInfoUpdate userInfoUpdate) {
-		UserValidator.validateSlackId(userInfoUpdate.slackId());
-		UserValidator.validateFirstName(userInfoUpdate.firstName());
-		UserValidator.validateLastName(userInfoUpdate.lastName());
-		UserValidator.validateEmail(userInfoUpdate.email());
-		UserValidator.validatePhone(userInfoUpdate.phone());
+	public void updateInfo(UserInfoUpdate request) {
+		UserValidator.validateSlackId(request.slackId());
+		UserValidator.validateFirstName(request.firstName());
+		UserValidator.validateLastName(request.lastName());
+		UserValidator.validateEmail(request.email());
+		UserValidator.validatePhone(request.phone());
 	}
 
-	public void updateOrganization(OrganizationInfo organization, UserRole role) {
-		UserValidator.validateOrganization(organization);
-		UserValidator.validateRole(organization.type(), role);
+	public void updateOrganization(UserRoleUpdate request) {
+		UserValidator.validateOrganization(request.organizationType(), request.organizationId());
+		UserValidator.validateRole(request.roles());
 
-		this.organizationType = organization.type();
-		this.organizationId = organization.id();
-		this.role = role;
+		validateOrganizationRole(request.organizationType(), request.roles());
+
+		this.organizationType = request.organizationType();
+		this.organizationId = request.organizationId();
+		setRoles(request.roles());
 	}
 
 	public void approve() {
@@ -116,5 +135,22 @@ public class User extends AbstractEntity {
 			throw new UserException(UserMessageCode.INVALID_STATUS_CHANGE);
 		}
 		this.status = UserStatus.REJECT;
+	}
+
+	public void validateOrganizationRole(OrganizationType type, Set<UserRole> roles) {
+		if (!UserRoleValidator.isValid(type, roles)) {
+			throw new UserException(UserMessageCode.INVALID_ORGANIZATION_ROLE, type, roles);
+		}
+	}
+
+	public void validateOrganizationAccess(OrganizationId id) {
+		if (!this.getRoles().isEmpty() || this.getRoles().contains(UserRole.HUB_MANAGER)) {
+			if (this.organizationId == null) {
+				throw new UserException(UserMessageCode.MISSING_ORGANIZATION_ID);
+			}
+			if (!this.organizationId.equals(id)) {
+				throw new UserException(UserMessageCode.ORGANIZATION_ACCESS_DENIED, this.organizationId);
+			}
+		}
 	}
 }

@@ -9,5 +9,6 @@ import com.smartlogis.userservice.domain.dto.UserSearch;
 
 public interface UserQueryService {
 	User getUserById(UserId id);
+	User getUserByUsername(String username);
 	Page<User> getUsers(UserSearch search, Pageable pageable);
 }

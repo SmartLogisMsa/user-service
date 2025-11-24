@@ -5,7 +5,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import com.smartlogis.userservice.application.AuthRegisterService;
+import com.smartlogis.userservice.application.service.AuthRegisterService;
 import com.smartlogis.userservice.application.dto.AuthUserResult;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakException;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakMessageCode;

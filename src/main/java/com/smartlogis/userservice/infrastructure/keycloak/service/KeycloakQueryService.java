@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smartlogis.userservice.application.AuthQueryService;
+import com.smartlogis.userservice.application.service.AuthQueryService;
 import com.smartlogis.userservice.application.dto.AuthUserResult;
 import com.smartlogis.userservice.infrastructure.keycloak.dto.KeycloakUser;
 

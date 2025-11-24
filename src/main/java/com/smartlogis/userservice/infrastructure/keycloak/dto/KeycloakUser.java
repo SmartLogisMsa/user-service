@@ -2,11 +2,12 @@ package com.smartlogis.userservice.infrastructure.keycloak.dto;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.keycloak.representations.idm.UserRepresentation;
 
-import com.smartlogis.userservice.domain.UserRole;
 import com.smartlogis.userservice.application.dto.AuthUserResult;
+import com.smartlogis.userservice.domain.UserRole;
 
 public record KeycloakUser(
 	String id,
@@ -17,7 +18,7 @@ public record KeycloakUser(
 		return new AuthUserResult(
 			UUID.fromString(this.id),
 			this.username,
-			this.roles.stream().map(UserRole::fromString).toList()
+			this.roles.stream().map(UserRole::fromString).collect(Collectors.toSet())
 		);
 	}
 

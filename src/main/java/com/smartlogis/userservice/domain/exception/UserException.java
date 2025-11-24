@@ -12,6 +12,10 @@ public class UserException extends AbstractException {
 		super(messageCode, message);
 	}
 
+	public UserException(MessageCode messageCode, Object... messageArguments) {
+		super(messageCode, messageArguments);
+	}
+
 	public UserException(MessageCode messageCode, Throwable cause) {
 		super(messageCode, cause);
 	}
