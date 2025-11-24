@@ -1,5 +1,7 @@
 package com.smartlogis.userservice.domain.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,11 @@ import lombok.RequiredArgsConstructor;
 public class UserQueryServiceImpl implements UserQueryService {
 
 	private final UserRepository repository;
+
+	@Override
+	public Optional<User> findUserByUsername(String username) {
+		return repository.findByUsername(username);
+	}
 
 	@Override
 	public User getUserById(UserId id) {

@@ -30,9 +30,15 @@ class UserValidator {
 		}
 	}
 
-	static void validateOrganization(OrganizationType type, OrganizationId id) {
-		if (type == null || id == null) {
-			throw new IllegalArgumentException("소속 정보(organization)는 비어 있을 수 없습니다.");
+	static void validateOrganizationType(OrganizationType type) {
+		if (type == null) {
+			throw new IllegalArgumentException("소속 타입(organizationType)는 비어 있을 수 없습니다.");
+		}
+	}
+
+	static void validateOrganizationId(OrganizationId id) {
+		if (id == null) {
+			throw new IllegalArgumentException("소속 ID(organizationId)는 비어 있을 수 없습니다.");
 		}
 	}
 

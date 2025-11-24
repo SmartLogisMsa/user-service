@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrganizationId {
 
-    @Column(name = "organization_id")
+    @Column(name = "organization_id", nullable = false)
     private UUID id;
 
     protected OrganizationId(UUID id) { this.id = id;}
