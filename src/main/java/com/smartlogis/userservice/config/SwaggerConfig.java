@@ -5,15 +5,33 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.smartlogis.userservice.presentation.annotation.EnumValid;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
+
+	@Bean
+	public OpenAPI openAPI(@Value("${openapi.service.url}") String url) {
+		return new OpenAPI()
+			.servers(List.of(new Server().url(url)))
+			.components(new Components().addSecuritySchemes("Bearer", new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
+			.addSecurityItem(new SecurityRequirement().addList("Bearer"))
+			.info(new Info().title("회원 서비스")
+				.description("User API"));
+	}
+
 	@Bean
 	public OpenApiCustomizer schemaCustomizer() {
 		return openApi -> openApi.getComponents().getSchemas().forEach((schemaName, schema) -> {

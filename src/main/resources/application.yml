@@ -16,10 +16,29 @@ spring:
 eureka:
   instance:
     prefer-ip-address: false
-    hostname: code-factory.co.kr
+    hostname: localhost
 
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${eureka.instance.hostname}:3150/eureka/
+      defaultZone: http://code-factory.co.kr:3150/eureka/
+
+springdoc:
+  version: '1.0.0'
+  api-docs:
+    path: /v3/api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /api-docs.html
+    disable-swagger-default-url: true
+    doc-expansion: list
+  paths-to-match:
+    - /**
+
+openapi:
+  service:
+    url: http://localhost:3000
