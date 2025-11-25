@@ -76,7 +76,7 @@ public class UserController {
 	}
 
 	@Operation(summary = "로그인한 회원정보 조회")
-	@GetMapping
+	@GetMapping("/profile")
 	public ResponseEntity<ApiResponse<UserInfoResponse>> getUser(@AuthenticationPrincipal AuthenticatedUser authentication) {
 		UserInfoResponse user = userService.getUserById(UUID.fromString(authentication.getId()));
 
@@ -85,7 +85,7 @@ public class UserController {
 
 	@Operation(summary = "특정 회원정보 조회")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
-	@GetMapping("/{userId}")
+	@GetMapping("/profile/{userId}")
 	public ResponseEntity<ApiResponse<UserInfoResponse>> getUserById(
 		@PathVariable UUID userId
 	) {
@@ -96,7 +96,7 @@ public class UserController {
 
 	@Operation(summary = "회원정보 목록 조회")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
-	@GetMapping("/all")
+	@GetMapping("/profile/all")
 	public ResponseEntity<ApiResponse<PageResponse<UserInfoResponse>>> getUsers(
 		@AuthenticationPrincipal AuthenticatedUser authentication,
 		@ParameterObject UserSearchRequest search,
@@ -111,7 +111,7 @@ public class UserController {
 
 	@Operation(summary = "회원정보 수정")
 	@PreAuthorize("hasAnyRole('MASTER', 'HUB_MANAGER')")
-	@PatchMapping("/{userId}")
+	@PatchMapping("/profile/{userId}")
 	public ResponseEntity<ApiResponse<Void>> updateUserInfo(
 		@AuthenticationPrincipal AuthenticatedUser authentication,
 		@Valid @RequestBody UserInfoUpdateRequest request,
@@ -177,7 +177,7 @@ public class UserController {
 
 	@Operation(summary = "회원가입 강제 승인 (관리자용)")
 	@PreAuthorize("hasRole('MASTER')")
-	@PatchMapping("/{userId}/force-approve")
+	@PatchMapping("/{userId}/approve-force")
 	public ResponseEntity<ApiResponse<Void>> approveForce(
 		@AuthenticationPrincipal AuthenticatedUser authentication,
 		@Valid @RequestBody UserRoleUpdateRequest request,
