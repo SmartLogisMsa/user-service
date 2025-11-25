@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 public class RedisCacheService {
 
 	@CacheEvict(cacheNames = "user", key = "#userId")
-	public void remove(String userId) {}
+	public void delete(String userId) {}
 
 	@CachePut(cacheNames = "user", key = "#userId")
-	public Set<String> update(String userId, Set<String> roles) {
+	public Set<String> add(String userId, Set<String> roles) {
 		return roles;
 	}
 }

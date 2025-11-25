@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
 		authService.addRole(userId.toString(), command.getRoleStrings());
 		userUpdateService.updateOrganization(UserId.of(userId), command.toUserRoleUpdate());
 
-		redisCacheService.update(userId.toString(), command.getRoleStrings());
+		redisCacheService.add(userId.toString(), command.getRoleStrings());
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
 		authService.deleteById(userId.toString());
 		user.delete();
 
-		redisCacheService.remove(userId.toString());
+		redisCacheService.delete(userId.toString());
 	}
 
 	@Override

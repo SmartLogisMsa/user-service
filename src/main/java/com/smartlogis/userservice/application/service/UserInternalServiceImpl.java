@@ -7,9 +7,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartlogis.userservice.domain.User;
 import com.smartlogis.userservice.domain.UserId;
 import com.smartlogis.userservice.domain.UserRole;
 import com.smartlogis.userservice.domain.service.UserQueryService;
+import com.smartlogis.userservice.presentation.dto.InternalUserResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,5 +30,12 @@ public class UserInternalServiceImpl implements UserInternalService {
 				 .map(UserRole::getValue)
 				 .collect(Collectors.toSet()))
 			 .orElse(Set.of());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public InternalUserResponse getUserById(UUID userId) {
+		User user = userQueryService.getUserById(UserId.of(userId));
+		return InternalUserResponse.from(user);
 	}
 }

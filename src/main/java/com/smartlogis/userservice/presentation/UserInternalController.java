@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smartlogis.userservice.application.service.UserInternalService;
+import com.smartlogis.userservice.presentation.dto.InternalUserResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,8 +20,13 @@ public class UserInternalController {
 
 	private final UserInternalService userService;
 
-	@GetMapping("/{userId}/roles")
+	@GetMapping("/roles/{userId}")
 	public Set<String> getRoles(@PathVariable String userId) {
 		return userService.getUserRolesById(UUID.fromString(userId));
+	}
+
+	@GetMapping("/user/{userId}")
+	public InternalUserResponse getUserById(@PathVariable String userId) {
+		return userService.getUserById(UUID.fromString(userId));
 	}
 }
