@@ -18,5 +18,5 @@ public record UserCreate(
 	@NotBlank String firstName,
 	@NotBlank String lastName,
 	@NotBlank String email,
-	@NotBlank UserPhone phone
+	@NotNull UserPhone phone
 ) {}
