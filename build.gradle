@@ -55,3 +55,8 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+def querydslDir = 'build/generated/sources/annotationProcessor/java/main'
+sourceSets {
+    main.java.srcDirs += [querydslDir]
+}
