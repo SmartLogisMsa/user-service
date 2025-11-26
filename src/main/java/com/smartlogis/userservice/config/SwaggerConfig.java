@@ -1,7 +1,9 @@
 package com.smartlogis.userservice.config;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springdoc.core.customizers.OpenApiCustomizer;
@@ -13,6 +15,8 @@ import com.smartlogis.userservice.presentation.annotation.EnumValid;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -22,6 +26,8 @@ import io.swagger.v3.oas.models.servers.Server;
 @Configuration
 public class SwaggerConfig {
 
+	private final String PREFIX = "/v1/users";
+
 	@Bean
 	public OpenAPI openAPI(@Value("${openapi.service.url}") String url) {
 		return new OpenAPI()
@@ -30,6 +36,29 @@ public class SwaggerConfig {
 			.addSecurityItem(new SecurityRequirement().addList("Bearer"))
 			.info(new Info().title("회원 서비스")
 				.description("User API"));
+	}
+
+	@Bean
+	public OpenApiCustomizer addPrefixToPaths() {
+		return openApi -> {
+			Paths paths = openApi.getPaths();
+			if (paths == null) return;
+
+			// 기존 paths에 prefix 붙여서 추가
+			Map<String, PathItem> original = new LinkedHashMap<>(paths);
+			for (String path : original.keySet().toArray(new String[0])) {
+				String prefixed = PREFIX + path;
+				if (!paths.containsKey(prefixed)) {
+					PathItem item = original.get(path);
+					paths.addPathItem(prefixed, item);
+				}
+			}
+
+			// 실제 엔드포인트는 제거하고 게이트웨이를 통한 엔드포인트만 노출
+			original.keySet().forEach(s -> {
+				if (!s.startsWith(PREFIX)) paths.remove(s);
+			});
+		};
 	}
 
 	@Bean
