@@ -50,7 +50,7 @@ public class KeycloakTokenService implements AuthTokenService {
 				throw new KeycloakException(KeycloakMessageCode.INTERNAL_FAILED, "Keycloak 토큰 발급에 실패하였습니다.");
 			}
 		} catch (Exception e) {
-			throw new KeycloakException(KeycloakMessageCode.INTERNAL_FAILED, e);
+			throw new KeycloakException(KeycloakMessageCode.INTERNAL_FAILED, e.getMessage());
 		}
 	}
 }

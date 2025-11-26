@@ -1,6 +1,8 @@
 package com.smartlogis.userservice.infrastructure.keycloak.dto;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -23,13 +25,17 @@ public record KeycloakUser(
 	}
 
 	public static KeycloakUser from(UserRepresentation user) {
+		List<String> roles = Optional.ofNullable(user.getRealmRoles())
+			.orElse(Collections.emptyList())
+			.stream()
+			.filter(r -> r.startsWith("ROLE_"))
+			.map(r -> r.replace("ROLE_", ""))
+			.collect(Collectors.toList());
+
 		return new KeycloakUser(
 			user.getId(),
 			user.getUsername(),
-			user.getRealmRoles().stream()
-				.filter(r -> r.startsWith("ROLE_"))
-				.map(r -> r.replace("ROLE_", ""))
-				.toList()
+			roles
 		);
 	}
 }

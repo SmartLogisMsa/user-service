@@ -10,6 +10,7 @@ import com.smartlogis.userservice.domain.UserId;
 import com.smartlogis.userservice.domain.dto.UserSearch;
 
 public interface UserQueryService {
+	Optional<User> findUserById(UserId userId);
 	Optional<User> findUserByUsername(String username);
 
 	User getUserById(UserId id);

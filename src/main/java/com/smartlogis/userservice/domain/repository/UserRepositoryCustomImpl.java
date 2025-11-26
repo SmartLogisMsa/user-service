@@ -45,7 +45,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 			condition.and(roles);
 		}
 
-		OrderSpecifier<?>[] orders = QuerydslSortUtils.toOrderSpecifiers(User.class, "createdAt", pageable.getSort());
+		OrderSpecifier<?>[] orders = QuerydslSortUtils.toOrderSpecifiers(user, "createdAt", pageable.getSort());
 
 		List<User> contents = queryFactory
 			.selectFrom(user)

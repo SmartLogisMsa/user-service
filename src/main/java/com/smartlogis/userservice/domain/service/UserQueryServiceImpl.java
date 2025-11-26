@@ -24,6 +24,11 @@ public class UserQueryServiceImpl implements UserQueryService {
 	private final UserRepository repository;
 
 	@Override
+	public Optional<User> findUserById(UserId userId) {
+		return repository.findById(userId);
+	}
+
+	@Override
 	public Optional<User> findUserByUsername(String username) {
 		return repository.findByUsername(username);
 	}

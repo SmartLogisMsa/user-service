@@ -34,11 +34,13 @@ public class UserServiceImpl implements UserService {
 	private final UserRegisterService userRegisterService;
 	private final UserUpdateService userUpdateService;
 	private final UserQueryService userQueryService;
-	private final UserRoleService userRoleService;
+	private final UserRolePolicy userRolePolicy;
 
 	private final AuthRegisterService authRegisterService;
 	private final AuthTokenService authTokenService;
 	private final AuthService authService;
+
+	private final RedisCacheService redisCacheService;
 
 	@Override
 	public UserInfoResponse getUserById(UUID userId) {
@@ -49,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public PageResponse<UserInfoResponse> getUsers(UUID requestedId, UserSearchCommand search, PageCommand page) {
-		userRoleService.verifyOrganizationAccess(requestedId, search.organizationId().toUuid());
+		userRolePolicy.verifyOrganizationAccess(requestedId, search.organizationId().toUuid());
 
 		Page<User> users = userQueryService.getUsers(search.toUserSearch(), page.getPageable());
 
@@ -70,7 +72,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updateInfo(UUID requestedId, UUID userId, UserInfoUpdateCommand command) {
 		User user = userQueryService.getUserById(UserId.of(userId));
-		userRoleService.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
+		userRolePolicy.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
 
 		userUpdateService.updateInfo(UserId.of(userId), command.toUserInfoUpdate());
 	}
@@ -78,43 +80,41 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updateRole(UUID requestedId, UUID userId, UserRoleUpdateCommand command) {
 		User user = userQueryService.getUserById(UserId.of(userId));
-		userRoleService.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
+		userRolePolicy.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
 
-		user.validateOrganizationRole(command.organizationType(), command.roles());
-
-		authService.removeRole(userId.toString(), command.getRoleStrings());
-		authService.addRole(userId.toString(), command.getRoleStrings());
-		userUpdateService.updateOrganization(UserId.of(userId), command.toUserRoleUpdate());
+		update(userId, command);
 	}
 
 	@Override
 	public void approve(UUID requestedId, UUID userId, UserRoleUpdateCommand command) {
 		User user = userQueryService.getUserById(UserId.of(userId));
-		userRoleService.verifyOrganizationAccess(requestedId, command.organizationId());
+		userRolePolicy.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
 
-		user.validateOrganizationRole(command.organizationType(), command.roles());
+		update(userId, command);
 		user.approve();
-
-		authService.addRole(userId.toString(), command.getRoleStrings());
-		userUpdateService.updateOrganization(UserId.of(userId), command.toUserRoleUpdate());
 	}
 
 	@Override
 	public void approveForce(UUID requestedId, UUID userId, UserRoleUpdateCommand command) {
 		User user = userQueryService.getUserById(UserId.of(userId));
-		userRoleService.verifyMaster(requestedId);
+		userRolePolicy.verifyMaster(requestedId);
 
-		user.validateOrganizationRole(command.organizationType(), command.roles());
+		update(userId, command);
 		user.approveForce();
+	}
 
+	private void update(UUID userId, UserRoleUpdateCommand command) {
+		authService.removeRole(userId.toString(), command.getRoleStrings());
 		authService.addRole(userId.toString(), command.getRoleStrings());
 		userUpdateService.updateOrganization(UserId.of(userId), command.toUserRoleUpdate());
+
+		redisCacheService.add(userId.toString(), command.getRoleStrings());
 	}
 
 	@Override
 	public void reject(UUID requestedId, UUID userId) {
 		User user = userQueryService.getUserById(UserId.of(userId));
-		userRoleService.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
+		userRolePolicy.verifyOrganizationAccess(requestedId, user.getOrganizationId().toUuid());
 		user.reject();
 
 		authService.deleteById(userId.toString());
@@ -137,14 +137,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void delete(UUID userId) {
 		User user = userQueryService.getUserById(UserId.of(userId));
-
 		authService.deleteById(userId.toString());
 		user.delete();
+
+		redisCacheService.delete(userId.toString());
 	}
 
 	@Override
 	public void deleteForce(UUID requestedId, UUID userId) {
-		userRoleService.verifyMaster(requestedId);
+		userRolePolicy.verifyMaster(requestedId);
 		delete(userId);
 	}
 }

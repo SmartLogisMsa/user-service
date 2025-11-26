@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserRoleServiceImpl implements UserRoleService {
+public class UserRolePolicyImpl implements UserRolePolicy {
 
 	private final UserQueryService userQueryService;
 

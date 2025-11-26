@@ -1,12 +1,13 @@
 package com.smartlogis.userservice.infrastructure.keycloak.service;
 
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import com.smartlogis.userservice.application.service.AuthRegisterService;
 import com.smartlogis.userservice.application.dto.AuthUserResult;
+import com.smartlogis.userservice.application.service.AuthRegisterService;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakException;
 import com.smartlogis.userservice.infrastructure.keycloak.KeycloakMessageCode;
 import com.smartlogis.userservice.infrastructure.keycloak.dto.KeycloakUser;
@@ -25,7 +26,8 @@ public class KeycloakRegisterService implements AuthRegisterService {
 	public AuthUserResult register(String username, String password) {
 		UserRepresentation user = createUser(username);
 
-		registerUser(user);
+		String userId = registerUser(user);
+		user.setId(userId);
 
 		setPassword(user.getId(), password);
 
@@ -40,7 +42,7 @@ public class KeycloakRegisterService implements AuthRegisterService {
 		return user;
 	}
 
-	private void registerUser(UserRepresentation user) {
+	private String registerUser(UserRepresentation user) {
 		try (Response response = helper.getUsersResource().create(user)) {
 			if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
 				String message = helper.getResponseMessage(response);
@@ -49,6 +51,7 @@ public class KeycloakRegisterService implements AuthRegisterService {
 					String.format("Keycloak 회원 등록에 실패하였습니다. { %s }", message)
 				);
 			}
+			return CreatedResponseUtil.getCreatedId(response);
 		}
 	}
 
