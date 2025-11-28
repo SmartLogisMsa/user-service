@@ -76,6 +76,7 @@ public class UserController {
 	}
 
 	@Operation(summary = "로그인한 회원정보 조회")
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping
 	public ResponseEntity<ApiResponse<UserInfoResponse>> getUser(@AuthenticationPrincipal AuthenticatedUser authentication) {
 		UserInfoResponse user = userService.getUserById(UUID.fromString(authentication.getId()));
@@ -138,6 +139,7 @@ public class UserController {
 	}
 
 	@Operation(summary = "회원 탈퇴")
+	@PreAuthorize("isAuthenticated()")
 	@DeleteMapping("/delete")
 	public ResponseEntity<ApiResponse<Void>> delete(
 		@AuthenticationPrincipal AuthenticatedUser authentication
